@@ -45,10 +45,8 @@
             <a href="#home" class="block px-6 py-2 text-gray-800 hover:bg-gray-100">Home</a>
             <a href="#process" class="block px-6 py-2 text-gray-800 hover:bg-gray-100">Process</a>
             <a href="#eligibility" class="block px-6 py-2 text-gray-800 hover:bg-gray-100">Eligibility</a>
-            <a href="#locations" class="block px-6 py-2 text-gray-800 hover:bg-gray-100">Locations</a>
-            <button class="block w-full text-center bg-red-600 text-white px-4 py-2 mt-2 rounded-lg hover:bg-red-700">
-                Donate Now
-            </button>
+            <a href="location.html" class="block px-6 py-2 text-gray-800 hover:bg-gray-100">Locations</a>
+            <a href="donatenow.html" class="block w-full text-center bg-red-600 text-white px-4 py-2 mt-2 rounded-lg hover:bg-red-700">Donate Now</a>
         </div>
     </nav>
 
@@ -222,25 +220,36 @@
     </footer>
 
     <script>
-         // Mobile menu toggle
-         const mobileMenuBtn = document.getElementById("mobile-menu-btn");
-         const mobileMenu = document.getElementById("mobile-menu");
- 
-         mobileMenuBtn.addEventListener("click", () => {
-             mobileMenu.classList.toggle("hidden");
-         });
- 
-         // Smooth scrolling for navigation links
-         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-             anchor.addEventListener('click', function (e) {
-                 e.preventDefault();
-                 document.querySelector(this.getAttribute('href')).scrollIntoView({
-                     behavior: 'smooth'
-                 });
-                 // Close mobile menu when a link is clicked
-                 mobileMenu.classList.add("hidden");
-             });
-         });
-    </script>
+            // Mobile menu toggle
+            const mobileMenuBtn = document.getElementById("mobile-menu-btn");
+            const mobileMenu = document.getElementById("mobile-menu");
+          
+            if (mobileMenuBtn && mobileMenu) {
+              mobileMenuBtn.addEventListener("click", () => {
+                mobileMenu.classList.toggle("hidden");
+              });
+            }
+          
+            // Smooth scrolling for in-page navigation links
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+              anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+          
+                // Scroll only if the section exists
+                if (target) {
+                  target.scrollIntoView({ behavior: 'smooth' });
+                }
+          
+                // Close mobile menu safely
+                const mobileMenu = document.getElementById("mobile-menu");
+                if (mobileMenu) {
+                  mobileMenu.classList.add("hidden");
+                }
+              });
+            });
+          </script>
+          
+        </script>     
 </body>
 </html>
