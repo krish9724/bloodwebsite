@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Find Donors - Blood Donation Center</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #ffe6e6;
+    }
+    .container {
+      max-width: 1200px;
+      margin: auto;
+      padding: 40px 20px;
+    }
+    h2 {
+      color: #d32f2f;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+    #map {
+      height: 450px;
+      width: 100%;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    .filter-group {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    select, button {
+      padding: 10px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+    button {
+      background-color: #d32f2f;
+      color: white;
+      cursor: pointer;
+      border: none;
+    }
+    button:hover {
+      background-color: #b71c1c;
+    }
+  </style>
+</head>
+<body>
+
+  <section id="location-section" class="container">
+    <h2>Find Nearby Donors</h2>
+
+    <div class="filter-group">
+      <select id="filterGroup">
+        <option value="">All Blood Groups</option>
+        <option>A+</option><option>A-</option>
+        <option>B+</option><option>B-</option>
+        <option>O+</option><option>O-</option>
+        <option>AB+</option><option>AB-</option>
+      </select>
+      <button id="centerBtn">📍 Center to My Location</button>
+    </div>
+
+    <div id="map"></div>
+  </section>
+
+  <!-- Scripts -->
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <script>
+    let map;
+    let donorMarkers = [];
+
+    document.addEventListener('DOMContentLoaded', () => {
+      map = L.map('map').setView([20.5937, 78.9629], 5); // Center: India
+
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors'
+      }).addTo(map);
+
+      loadDonors();
+
+      document.getElementById('filterGroup').addEventListener('change', loadDonors);
+      document.getElementById('centerBtn').addEventListener('click', centerToUser);
+    });
+
+    function loadDonors() {
+      const groupFilter = document.getElementById('filterGroup').value;
+      const donors = JSON.parse(localStorage.getItem('donors')) || [];
+
+      // Clear previous markers
+      donorMarkers.forEach(marker => map.removeLayer(marker));
+      donorMarkers = [];
+
+      donors.forEach(donor => {
+        if (!donor.lat || !donor.lng) return;
+        if (groupFilter && donor.group !== groupFilter) return;
+
+        const marker = L.marker([donor.lat, donor.lng]).addTo(map)
+          .bindPopup(`<b>${donor.name}</b><br>Blood Group: ${donor.group}<br>${donor.city}`);
+        donorMarkers.push(marker);
+      });
+    }
+
+    function centerToUser() {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          position => {
+            const lat = position.coords.latitude;
+            const lng = position.coords.longitude;
+
+            map.setView([lat, lng], 12);
+            const circle = L.circle([lat, lng], {
+              radius: 500,
+              color: '#d32f2f',
+              fillColor: '#f88',
+              fillOpacity: 0.3
+            }).addTo(map);
+            circle.bindPopup('📍 You are here').openPopup();
+          },
+          () => {
+            alert('Location access denied.');
+          }
+        );
+      } else {
+        alert('Geolocation is not supported by your browser.');
+      }
+    }
+  </script>
+</body>
+</html>

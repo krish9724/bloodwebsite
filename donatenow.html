@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Donate Now - Blood Donation Center</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #ffe6e6;
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 50px auto;
+      background: #fff;
+      border-radius: 10px;
+      padding: 30px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #d32f2f;
+    }
+
+    input, select, textarea, button {
+      width: 100%;
+      padding: 12px;
+      margin: 8px 0;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+
+    button {
+      background-color: #d32f2f;
+      color: white;
+      cursor: pointer;
+      border: none;
+    }
+
+    button:hover {
+      background-color: #b71c1c;
+    }
+
+    .btn-secondary {
+      background-color: #555;
+      margin-top: 6px;
+    }
+
+    .btn-secondary:hover {
+      background-color: #333;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h2>Donate Blood Now</h2>
+    <form id="donateForm">
+      <input type="text" id="donorName" placeholder="Full Name" required />
+      <input type="number" id="donorAge" placeholder="Age" required />
+      
+      <select id="donorGroup" required>
+        <option value="">Select Blood Group</option>
+        <option>A+</option><option>A-</option>
+        <option>B+</option><option>B-</option>
+        <option>O+</option><option>O-</option>
+        <option>AB+</option><option>AB-</option>
+      </select>
+      
+      <input type="tel" id="donorPhone" placeholder="Phone Number" required />
+      <input type="text" id="donorCity" placeholder="City" required />
+
+      <!-- Use My Location button -->
+      <button type="button" class="btn-secondary" onclick="useMyLocation()">📍 Use My Location</button>
+
+      <!-- Latitude & Longitude -->
+      <input type="text" id="donorLat" placeholder="Latitude" readonly />
+      <input type="text" id="donorLng" placeholder="Longitude" readonly />
+
+      <textarea id="donorNote" rows="3" placeholder="Additional Notes (Optional)"></textarea>
+
+      <button type="submit">Submit Donation</button>
+    </form>
+  </div>
+  <!-- Toast Success Message -->
+<div id="toast" style="
+display: none;
+position: fixed;
+bottom: 30px;
+right: 30px;
+background-color: #4CAF50;
+color: white;
+padding: 16px 24px;
+border-radius: 8px;
+box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+font-size: 16px;
+z-index: 9999;
+">
+✅ Donation submitted successfully!
+</div>
+
+
+  <script>
+    function useMyLocation() {
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(pos => {
+            document.getElementById('donorLat').value = pos.coords.latitude.toFixed(5);
+            document.getElementById('donorLng').value = pos.coords.longitude.toFixed(5);
+          }, () => alert("Location permission denied"));
+        } else {
+          alert("Geolocation not supported");
+        }
+      }
+      
+      const donateForm = document.getElementById('donateForm');
+      if (donateForm) {
+        donateForm.addEventListener('submit', e => {
+          e.preventDefault();
+          const donor = {
+            name: document.getElementById('donorName').value,
+            age: document.getElementById('donorAge').value,
+            group: document.getElementById('donorGroup').value,
+            phone: document.getElementById('donorPhone').value,
+            city: document.getElementById('donorCity').value,
+            lat: document.getElementById('donorLat').value,
+            lng: document.getElementById('donorLng').value,
+            note: document.getElementById('donorNote').value
+          };
+          const donors = JSON.parse(localStorage.getItem('donors')) || [];
+          donors.push(donor);
+          localStorage.setItem('donors', JSON.stringify(donors));
+          
+          // Show toast
+          const toast = document.getElementById("toast");
+          toast.style.display = "block";
+          setTimeout(() => {
+            toast.style.display = "none";
+          }, 3000);
+      
+          donateForm.reset();
+        });
+      }
+      
+  </script>
+  
+</body>
+</html>

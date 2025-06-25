@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Schedule Donation - Blood Donation Center</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #ffe6e6;
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      max-width: 600px;
+      margin: 50px auto;
+      background: #fff;
+      border-radius: 10px;
+      padding: 30px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #d32f2f;
+    }
+    input, select, textarea, button {
+      width: 100%;
+      padding: 12px;
+      margin: 8px 0;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+    button {
+      background-color: #d32f2f;
+      color: white;
+      cursor: pointer;
+      border: none;
+    }
+    button:hover {
+      background-color: #b71c1c;
+    }
+
+    #toast {
+      display: none;
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      background-color: #4CAF50;
+      color: white;
+      padding: 16px 24px;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      font-size: 16px;
+      z-index: 9999;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h2>Schedule Blood Donation</h2>
+    <form id="scheduleForm">
+      <input type="text" id="schedName" placeholder="Full Name" required />
+      <input type="tel" id="schedPhone" placeholder="Phone Number" required />
+      
+      <select id="schedGroup" required>
+        <option value="">Select Blood Group</option>
+        <option>A+</option><option>A-</option>
+        <option>B+</option><option>B-</option>
+        <option>O+</option><option>O-</option>
+        <option>AB+</option><option>AB-</option>
+      </select>
+      
+      <input type="date" id="schedDate" required />
+      <input type="time" id="schedTime" required />
+      <input type="text" id="schedPlace" placeholder="Preferred Hospital or Center" required />
+      <textarea id="schedNote" rows="3" placeholder="Message or Additional Details (Optional)"></textarea>
+      
+      <button type="submit">Schedule Now</button>
+    </form>
+  </div>
+
+  <!-- Toast popup -->
+  <div id="toast">✅ Donation scheduled successfully!</div>
+
+  <script>
+    const time = document.getElementById('schedTime').value;
+console.log(time);
+
+    const scheduleForm = document.getElementById('scheduleForm');
+if (scheduleForm) {
+  scheduleForm.addEventListener('submit', e => {
+    e.preventDefault();
+    const schedule = {
+      name: document.getElementById('schedName').value,
+      phone: document.getElementById('schedPhone').value,
+      group: document.getElementById('schedGroup').value,
+      date: document.getElementById('schedDate').value,
+      time: document.getElementById('schedTime').value,
+      place: document.getElementById('schedPlace').value,
+      note: document.getElementById('schedNote').value
+    };
+    const schedules = JSON.parse(localStorage.getItem('schedules')) || [];
+    schedules.push(schedule);
+    localStorage.setItem('schedules', JSON.stringify(schedules));
+
+    // Show toast
+    const toast = document.getElementById("toast");
+    toast.style.display = "block";
+    setTimeout(() => {
+      toast.style.display = "none";
+    }, 3000);
+
+    scheduleForm.reset();
+  });
+}
+         
+  </script>
+</body>
+</html>
