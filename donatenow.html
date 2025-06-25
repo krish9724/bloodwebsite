@@ -35,6 +35,7 @@
       font-size: 16px;
       border: 1px solid #ccc;
       border-radius: 6px;
+      box-sizing: border-box;
     }
 
     button {
@@ -56,16 +57,60 @@
     .btn-secondary:hover {
       background-color: #333;
     }
+
+    #toast {
+      display: none;
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      background-color: #4CAF50;
+      color: white;
+      padding: 16px 24px;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      font-size: 16px;
+      z-index: 9999;
+    }
+
+    .back-btn {
+      display: inline-block;
+      margin-bottom: 20px;
+      padding: 10px 20px;
+      background-color: #d32f2f;
+      color: white;
+      text-decoration: none;
+      border-radius: 6px;
+      font-weight: 500;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+
+    @media (max-width: 600px) {
+      .container {
+        margin: 20px;
+        padding: 20px;
+      }
+
+      #toast {
+        left: 10px;
+        right: 10px;
+        font-size: 14px;
+        padding: 12px;
+        text-align: center;
+      }
+    }
   </style>
 </head>
 <body>
 
   <div class="container">
+    <!-- ✅ Back to Home button -->
+    <a href="index.html" class="back-btn">← Back to Home</a>
+
     <h2>Donate Blood Now</h2>
     <form id="donateForm">
       <input type="text" id="donorName" placeholder="Full Name" required />
       <input type="number" id="donorAge" placeholder="Age" required />
-      
+
       <select id="donorGroup" required>
         <option value="">Select Blood Group</option>
         <option>A+</option><option>A-</option>
@@ -73,14 +118,12 @@
         <option>O+</option><option>O-</option>
         <option>AB+</option><option>AB-</option>
       </select>
-      
+
       <input type="tel" id="donorPhone" placeholder="Phone Number" required />
       <input type="text" id="donorCity" placeholder="City" required />
 
-      <!-- Use My Location button -->
       <button type="button" class="btn-secondary" onclick="useMyLocation()">📍 Use My Location</button>
 
-      <!-- Latitude & Longitude -->
       <input type="text" id="donorLat" placeholder="Latitude" readonly />
       <input type="text" id="donorLng" placeholder="Longitude" readonly />
 
@@ -89,66 +132,51 @@
       <button type="submit">Submit Donation</button>
     </form>
   </div>
-  <!-- Toast Success Message -->
-<div id="toast" style="
-display: none;
-position: fixed;
-bottom: 30px;
-right: 30px;
-background-color: #4CAF50;
-color: white;
-padding: 16px 24px;
-border-radius: 8px;
-box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-font-size: 16px;
-z-index: 9999;
-">
-✅ Donation submitted successfully!
-</div>
 
+  <!-- ✅ Toast -->
+  <div id="toast">✅ Donation submitted successfully!</div>
 
   <script>
     function useMyLocation() {
-        if (navigator.geolocation) {
-          navigator.geolocation.getCurrentPosition(pos => {
-            document.getElementById('donorLat').value = pos.coords.latitude.toFixed(5);
-            document.getElementById('donorLng').value = pos.coords.longitude.toFixed(5);
-          }, () => alert("Location permission denied"));
-        } else {
-          alert("Geolocation not supported");
-        }
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(pos => {
+          document.getElementById('donorLat').value = pos.coords.latitude.toFixed(5);
+          document.getElementById('donorLng').value = pos.coords.longitude.toFixed(5);
+        }, () => alert("Location permission denied"));
+      } else {
+        alert("Geolocation not supported");
       }
-      
-      const donateForm = document.getElementById('donateForm');
-      if (donateForm) {
-        donateForm.addEventListener('submit', e => {
-          e.preventDefault();
-          const donor = {
-            name: document.getElementById('donorName').value,
-            age: document.getElementById('donorAge').value,
-            group: document.getElementById('donorGroup').value,
-            phone: document.getElementById('donorPhone').value,
-            city: document.getElementById('donorCity').value,
-            lat: document.getElementById('donorLat').value,
-            lng: document.getElementById('donorLng').value,
-            note: document.getElementById('donorNote').value
-          };
-          const donors = JSON.parse(localStorage.getItem('donors')) || [];
-          donors.push(donor);
-          localStorage.setItem('donors', JSON.stringify(donors));
-          
-          // Show toast
-          const toast = document.getElementById("toast");
-          toast.style.display = "block";
-          setTimeout(() => {
-            toast.style.display = "none";
-          }, 3000);
-      
-          donateForm.reset();
-        });
-      }
-      
+    }
+
+    const donateForm = document.getElementById('donateForm');
+    if (donateForm) {
+      donateForm.addEventListener('submit', e => {
+        e.preventDefault();
+        const donor = {
+          name: document.getElementById('donorName').value,
+          age: document.getElementById('donorAge').value,
+          group: document.getElementById('donorGroup').value,
+          phone: document.getElementById('donorPhone').value,
+          city: document.getElementById('donorCity').value,
+          lat: document.getElementById('donorLat').value,
+          lng: document.getElementById('donorLng').value,
+          note: document.getElementById('donorNote').value
+        };
+        const donors = JSON.parse(localStorage.getItem('donors')) || [];
+        donors.push(donor);
+        localStorage.setItem('donors', JSON.stringify(donors));
+
+        // Show toast
+        const toast = document.getElementById("toast");
+        toast.style.display = "block";
+        setTimeout(() => {
+          toast.style.display = "none";
+        }, 3000);
+
+        donateForm.reset();
+      });
+    }
   </script>
-  
+
 </body>
 </html>
