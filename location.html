@@ -50,11 +50,39 @@
     button:hover {
       background-color: #b71c1c;
     }
+    .back-btn {
+      display: inline-block;
+      margin-bottom: 20px;
+      padding: 10px 20px;
+      background-color: #d32f2f;
+      color: white;
+      text-decoration: none;
+      border-radius: 6px;
+      font-weight: 500;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+
+
+    /* Responsive fix for small screens */
+    @media (max-width: 600px) {
+      .container {
+        padding: 20px 10px;
+      }
+      .filter-group {
+        flex-direction: column;
+        align-items: center;
+      }
+      select, button {
+        width: 100%;
+        max-width: 300px;
+      }
+    }
   </style>
 </head>
 <body>
 
   <section id="location-section" class="container">
+    <a href="index.html" class="back-btn">← Back to Home</a>
     <h2>Find Nearby Donors</h2>
 
     <div class="filter-group">
@@ -78,26 +106,39 @@
     let donorMarkers = [];
 
     document.addEventListener('DOMContentLoaded', () => {
-      map = L.map('map').setView([20.5937, 78.9629], 5); // Center: India
+      // Initialize map
+      map = L.map('map').setView([20.5937, 78.9629], 5); // India center
 
+      // Load tiles
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '© OpenStreetMap contributors'
       }).addTo(map);
 
+      // Load existing donors
       loadDonors();
 
-      document.getElementById('filterGroup').addEventListener('change', loadDonors);
-      document.getElementById('centerBtn').addEventListener('click', centerToUser);
+      // Events
+      const filterGroup = document.getElementById('filterGroup');
+      const centerBtn = document.getElementById('centerBtn');
+
+      if (filterGroup) {
+        filterGroup.addEventListener('change', loadDonors);
+      }
+
+      if (centerBtn) {
+        centerBtn.addEventListener('click', centerToUser);
+      }
     });
 
     function loadDonors() {
       const groupFilter = document.getElementById('filterGroup').value;
       const donors = JSON.parse(localStorage.getItem('donors')) || [];
 
-      // Clear previous markers
+      // Clear old markers
       donorMarkers.forEach(marker => map.removeLayer(marker));
       donorMarkers = [];
 
+      // Add markers
       donors.forEach(donor => {
         if (!donor.lat || !donor.lng) return;
         if (groupFilter && donor.group !== groupFilter) return;
